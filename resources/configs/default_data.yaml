@@ -1,0 +1,193 @@
+person_type:
+  - id: 1
+    name: Staff
+    status: 1
+
+server:
+  - id: 1
+    name: Server 1
+    status: 1
+
+function:
+  - id: 1
+    name: Face Recognition
+    status: 1
+
+unit:
+  - id: 1
+    name: Công ty phần mềm ATIN
+    code: ATIN
+    parent_id: null
+    status: 1
+
+role:
+  - id: 1
+    name: Admin
+    description: System Administrator
+    status: 1
+
+privilege:
+  - id: 1
+    name: ManageUser
+    description: Can manage users
+    method_route: POST,PUT,DELETE /users/*
+    status: 1
+  - id: 2
+    name: ViewUser
+    description: Can view users
+    method_route: GET /users/*
+    status: 1
+  - id: 3
+    name: ManageRole
+    description: Can manage roles
+    method_route: POST,PUT,DELETE /roles/*
+    status: 1
+  - id: 4
+    name: ViewRole
+    description: Can view roles
+    method_route: GET /roles/*
+    status: 1
+  - id: 5
+    name: ManageUnit
+    description: Can manage units
+    method_route: POST,PUT,DELETE /units/*
+    status: 1
+  - id: 6
+    name: ViewUnit
+    description: Can view units
+    method_route: GET /units/*
+    status: 1
+  - id: 7
+    name: ManageDepartment
+    description: Can manage departments
+    method_route: POST,PUT,DELETE /departments/*
+    status: 1
+  - id: 8
+    name: ViewDepartment
+    description: Can view departments
+    method_route: GET /departments/*
+    status: 1
+  - id: 9
+    name: ManageArea
+    description: Can manage areas
+    method_route: POST,PUT,DELETE /areas/*
+    status: 1
+  - id: 10
+    name: ViewArea
+    description: Can view areas
+    method_route: GET /areas/*
+    status: 1
+  - id: 11
+    name: ManageCamera
+    description: Can manage cameras
+    method_route: POST,PUT,DELETE /cameras/*
+    status: 1
+  - id: 12
+    name: ViewCamera
+    description: Can view cameras
+    method_route: GET /cameras/*
+    status: 1
+  - id: 13
+    name: ManagePerson
+    description: Can manage persons
+    method_route: POST,PUT,DELETE /persons/*
+    status: 1
+  - id: 14
+    name: ViewPerson
+    description: Can view persons
+    method_route: GET /persons/*
+    status: 1
+  - id: 15
+    name: ManagePersonEvent
+    description: Can manage person events
+    method_route: POST,PUT,DELETE /person-events/*
+    status: 1
+  - id: 16
+    name: ViewPersonEvent
+    description: Can view person events
+    method_route: GET /person-events/*
+    status: 1
+  - id: 17
+    name: ManageServer
+    description: Can manage servers
+    method_route: POST,PUT,DELETE /servers/*
+    status: 1
+  - id: 18
+    name: ViewServer
+    description: Can view servers
+    method_route: GET /servers/*
+    status: 1
+  - id: 19
+    name: ManageFunction
+    description: Can manage functions
+    method_route: POST,PUT,DELETE /functions/*
+    status: 1
+  - id: 20
+    name: ViewFunction
+    description: Can view functions
+    method_route: GET /functions/*
+    status: 1
+  - id: 21
+    name: ManagePrivilege
+    description: Can manage privileges
+    method_route: POST,PUT,DELETE /privileges/*
+    status: 1
+  - id: 22
+    name: ViewPrivilege
+    description: Can view privileges
+    method_route: GET /privileges/*
+    status: 1
+
+user:
+  - id: 1
+    username: admin
+    password: Ab@123456  # Will be hashed during migration
+    full_name: System Administrator
+    unit_id: 1
+    status: 1
+
+role_privilege:
+  - role_id: 1
+    privilege_id: 1
+  - role_id: 1
+    privilege_id: 2
+  - role_id: 1
+    privilege_id: 3
+  - role_id: 1
+    privilege_id: 4
+  - role_id: 1
+    privilege_id: 5
+  - role_id: 1
+    privilege_id: 6
+  - role_id: 1
+    privilege_id: 7
+  - role_id: 1
+    privilege_id: 8
+  - role_id: 1
+    privilege_id: 9
+  - role_id: 1
+    privilege_id: 10
+  - role_id: 1
+    privilege_id: 11
+  - role_id: 1
+    privilege_id: 12
+  - role_id: 1
+    privilege_id: 13
+  - role_id: 1
+    privilege_id: 14
+  - role_id: 1
+    privilege_id: 15
+  - role_id: 1
+    privilege_id: 16
+  - role_id: 1
+    privilege_id: 17
+  - role_id: 1
+    privilege_id: 18
+  - role_id: 1
+    privilege_id: 19
+  - role_id: 1
+    privilege_id: 20
+
+user_role:
+  - user_id: 1
+    role_id: 1

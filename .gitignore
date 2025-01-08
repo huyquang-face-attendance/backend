@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+
+# Logs
+*.log
+logs/
+
+# Local development
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependencies
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Distribution
+.Python
+*.manifest
+*.spec
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# resources
+*.env
+
+# test
+atin-face/
+storage/
+
+create_staff.py
+delete_staff.py
+own_staff.json
+staff.json

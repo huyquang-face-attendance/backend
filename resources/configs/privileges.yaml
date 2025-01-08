@@ -1,0 +1,43 @@
+user:
+  view: ViewUser
+  manage: ManageUser
+
+role:
+  view: ViewRole
+  manage: ManageRole
+
+unit:
+  view: ViewUnit
+  manage: ManageUnit
+
+privilege:
+  view: ViewPrivilege
+  manage: ManagePrivilege
+
+department:
+  view: ViewDepartment
+  manage: ManageDepartment
+
+area:
+  view: ViewArea
+  manage: ManageArea
+
+camera:
+  view: ViewCamera
+  manage: ManageCamera
+
+function:
+  view: ViewFunction
+  manage: ManageFunction
+
+server:
+  view: ViewServer
+  manage: ManageServer
+
+person:
+  view: ViewPerson
+  manage: ManagePerson
+
+person_event:
+  view: ViewPersonEvent
+  manage: ManagePersonEvent

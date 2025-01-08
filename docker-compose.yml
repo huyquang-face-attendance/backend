@@ -1,0 +1,38 @@
+services:
+  attendance-backend:
+    image: huyquang/attendance-backend:latest
+    container_name: attendance-backend
+    command: python run.py
+    network_mode: host
+    volumes:
+      - .:/app
+      - /mnt/atin/huyquang/project-face/face-attendance/storage:/storage
+    env_file:
+      - ./resources/configs/.env
+    restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:62001/api/v1/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
+    depends_on:
+      - redis
+      - celery-worker
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "62079:6379"
+
+  celery-worker:
+    build: .
+    command: celery -A app.core.celery.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+      - /mnt/atin/huyquang/project-face/face-attendance/storage:/storage
+    env_file:
+      - ./resources/configs/.env
+    network_mode: host
+    depends_on:
+      - redis
