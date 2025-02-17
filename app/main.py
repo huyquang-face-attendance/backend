@@ -21,18 +21,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-]
-
-# Add CORS middleware
+# Update the middleware configuration:
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_methods=settings.CORS_ALLOW_METHODS,
+    allow_headers=settings.CORS_ALLOW_HEADERS,
 )
 
 app.include_router(api_router, prefix="/api/v1")

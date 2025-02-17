@@ -469,3 +469,147 @@ async def search_face(
         data=[detect_result.data],
         nearest_result=nearest_result
     )
+
+
+async def search_face_camera(
+    db: AsyncSession,
+    base64_image: str,
+    unit_id: int,
+    department_id: Optional[int] = None,
+    threshold: float = 0.6,
+    quality: float = 0.3,
+    num_result: int = 1
+) -> FaceSearchResponse:
+    """Search for persons by face embedding with unit and department filtering"""
+    # Validate unit exists
+    unit = await get_unit_by_id(db, unit_id)
+    if not unit:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unit does not exist"
+        )
+
+    # Call face detection API
+    t = time.time()
+    detect_result = await detect_face(base64_image)
+    request_time = time.time() - t
+
+    # Validate detection quality
+    if detect_result.data.quality < quality:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Face image quality is too low: {detect_result.data.quality}"
+        )
+
+    # Adjust threshold if mask is detected
+    adjusted_threshold = threshold
+    if detect_result.data.wearmask:
+        adjusted_threshold = max(0.0, threshold - settings.MASK_THRESHOLD_SUB)
+    # Convert embedding to numpy array and normalize
+    search_embedding = np.array(detect_result.data.feature)
+    search_embedding = search_embedding / np.linalg.norm(search_embedding)
+    del detect_result.data.feature
+
+    # Build base query
+    query = (
+        select(Person)
+        .join(Person.department)  # Join with department
+        .where(
+            Person.deleted_at.is_(None),
+            Person.feature.isnot(None),
+        )
+    )
+
+    # Get all departments in the unit
+    departments = await get_departments(db, unit_id=unit_id)
+    department_ids = [dept.id for dept in departments.items]
+    if not department_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No departments found in the unit"
+        )
+
+    # Filter by department_id if provided, otherwise use all departments in unit
+    if department_id:
+        if department_id not in department_ids:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Department does not belong to the specified unit"
+            )
+        query = query.where(Person.department_id == department_id)
+    else:
+        query = query.where(Person.department_id.in_(department_ids))
+
+    # Execute query
+    result = await db.execute(query)
+    persons = result.scalars().all()
+
+    if not persons:
+        return FaceSearchResponse(
+            request_time=request_time,
+            results=[],
+            data=[detect_result.data],
+            nearest_result=None
+        )
+
+    # Calculate similarities for all persons
+    similarities = []
+    for person in persons:
+        if not person.feature:
+            continue
+
+        # Convert stored feature to numpy array and normalize
+        person_embedding = np.array(person.feature)
+        person_embedding = person_embedding / np.linalg.norm(person_embedding)
+
+        # Calculate cosine similarity
+        similarity = min(round(
+            float(np.dot(search_embedding, person_embedding)), 2) * 2, 1.0)
+
+        # Add to similarities list regardless of threshold
+        similarities.append((similarity, person))
+
+    # Sort by similarity in descending order
+    similarities.sort(key=lambda x: x[0], reverse=True)
+
+    # Get nearest result (highest similarity) regardless of threshold
+    nearest_person = similarities[0] if similarities else None
+    nearest_result = None
+    if nearest_person:
+        similarity, person = nearest_person
+        nearest_result = FaceSearchResult(
+            person_id=person.id,
+            name=person.name,
+            code=person.code,
+            department_id=person.department_id,
+            type=person.type,
+            similarity=similarity,
+            image=person.image
+        )
+
+    # Filter results by threshold
+    threshold_results = [(s, p)
+                         for s, p in similarities if s >= adjusted_threshold]
+    # Take top N results
+    top_results = threshold_results[:num_result]
+
+    # Convert to response format
+    search_results = [
+        FaceSearchResult(
+            person_id=person.id,
+            name=person.name,
+            code=person.code,
+            department_id=person.department_id,
+            type=person.type,
+            similarity=similarity,
+            image=person.image
+        )
+        for similarity, person in top_results
+    ]
+
+    return FaceSearchResponse(
+        request_time=request_time,
+        results=search_results,
+        data=[detect_result.data],
+        nearest_result=nearest_result
+    )

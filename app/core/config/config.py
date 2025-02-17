@@ -86,6 +86,12 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
 
+    # CORS Settings
+    CORS_ORIGINS: List[str] = ["*"]
+    CORS_ALLOW_CREDENTIALS: bool = True
+    CORS_ALLOW_METHODS: List[str] = ["*"]
+    CORS_ALLOW_HEADERS: List[str] = ["*"]
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._load_privileges()

@@ -10,12 +10,6 @@ services:
     env_file:
       - ./resources/configs/.env
     restart: unless-stopped
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:62001/api/v1/health"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 40s
     depends_on:
       - redis
       - celery-worker
@@ -23,16 +17,40 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "62079:6379"
+      - "63079:6379"
+    volumes:
+      - redis_data:/data
 
   celery-worker:
     build: .
     command: celery -A app.core.celery.celery_app worker --loglevel=info
+    network_mode: host
     volumes:
       - .:/app
       - /mnt/atin/huyquang/project-face/face-attendance/storage:/storage
     env_file:
       - ./resources/configs/.env
-    network_mode: host
     depends_on:
       - redis
+
+  file-server:
+    image: python:3.9-slim
+    command: python -m http.server 8080 --directory /storage/person-register
+    volumes:
+      - /mnt/atin/huyquang/project-face/face-attendance/storage:/storage
+    ports:
+      - "62012:8080"
+  
+  nginx:
+    image: nginx:alpine
+    network_mode: host
+    ports:
+      - "62001:62001"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - file-server
+
+
+volumes:
+  redis_data:

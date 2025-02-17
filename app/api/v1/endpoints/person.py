@@ -130,3 +130,30 @@ async def search_face(
         num_result=search_request.num_result,
         quality=search_request.quality
     )
+
+
+@router.post("/search-face-camera", response_model=FaceSearchResponse)
+async def search_face_camera(
+    *,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_active_user),
+    search_request: FaceSearchRequest
+):
+    """
+    Search for persons by face embedding with unit and department filtering
+    """
+    if not search_request.base64_image:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Base64 image is required"
+        )
+
+    return await person_service.search_face_camera(
+        db,
+        base64_image=search_request.base64_image,
+        unit_id=search_request.unit_id,
+        department_id=search_request.department_id,
+        threshold=search_request.threshold,
+        num_result=search_request.num_result,
+        quality=search_request.quality
+    )
